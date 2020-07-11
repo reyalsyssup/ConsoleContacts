@@ -4,7 +4,7 @@ colorama.init(autoreset=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--search", help="What you'd like to search comes after")
-parser.add_argument("-l", "--list", help="Lists all contact names")
+parser.add_argument("-l", "--list", action="store_true", help="Lists all contact names")
 parser.add_argument("-a", "--add", nargs="+", help="Add a contact: name email [phone]")
 parser.add_argument("-r", "--remove", nargs="+", help="Remove a contact: name email [phone]")
 
@@ -57,11 +57,17 @@ def run():
         for i in users:
             if i[0] == args.remove[0] and i[1] == args.remove[1]:
                 users.remove(i)
-        print(users)
         pickleOut = open("contacts.pickle", "wb")
         pickle.dump(users, pickleOut)
         pickleOut.close()
-    
+    elif args.list:
+        try:
+            pickleIn = open("contacts.pickle", "rb")
+            users = pickle.load(pickleIn)
+            pickleIn.close()
+        except: return print("No users in db to list")
+        for i in users:
+            print(f"{Fore.GREEN}{i[0]}")
     else: parser.print_help()
 
 if __name__ == "__main__": run()
